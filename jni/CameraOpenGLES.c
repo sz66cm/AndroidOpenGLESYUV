@@ -25,33 +25,45 @@ const char * codeVertexShader = \
 //片元着色器脚本代码
 //const char * codeFragShader = \
 //"precision mediump float;											\n" \
-//"uniform sampler2D sTexture; 										\n" \
+//"uniform sampler2D yTexture; 										\n" \
+//"uniform sampler2D uTexture; 										\n" \
+//"uniform sampler2D vTexture; 										\n" \
 //"varying vec2 vTexCoor;												\n" \
 //"void main()														\n" \
 //"{																	\n" \
-//"	float r,g,b,y;																	\n" \
-//"	y = texture2D(sTexture, vTexCoor).r;																	\n" \
-//"	r = y;																	\n" \
-//"	g = y;																	\n" \
-//"	b = y;																	\n" \
+//"	float r,g,b,y,u,v;																	\n" \
+//"	y = texture2D(yTexture, vTexCoor).r;																	\n" \
+//"	u = texture2D(vTexture, vTexCoor).r;																	\n" \
+//"	v = texture2D(uTexture, vTexCoor).r;																	\n" \
+//"	r = y + 1.4075 * (v - 0.5);																	\n" \
+//"	g = y - 0.3455 * (u - 0.5) - 0.7169 * (v - 0.5);																	\n" \
+//"	b = y + 1.779 * (u - 0.5);																	\n" \
 //"	gl_FragColor = vec4(r,g,b,1.0);										\n" \
 //"}																	\n" \
 //;
 
 const char * codeFragShader = \
 "precision mediump float;											\n" \
-"uniform sampler2D sTexture; 										\n" \
+"uniform sampler2D yTexture; 										\n" \
+"uniform sampler2D uTexture; 										\n" \
+"uniform sampler2D vTexture; 										\n" \
 "varying vec2 vTexCoor;												\n" \
 "void main()														\n" \
 "{																	\n" \
-"	vec3 yuv = vec3(texture2D(sTexture, vTexCoor).r, 0.5, 0.5);		\n" \
+"	float y = texture2D(yTexture, vTexCoor).r;		\n" \
+"	float u = texture2D(uTexture, vTexCoor).r;		\n" \
+"	float v = texture2D(vTexture, vTexCoor).r;		\n" \
+"	vec3 yuv = vec3(y, u, v);		\n" \
 "	vec3 offset = vec3(16.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);								\n" \
 "	mat3 mtr = mat3(1,1,1, -0.001,-0.3441,1.772, 1.402,-0.7141,0.001);\n" \
 "	vec4 curColor = vec4(mtr * (yuv - offset), 1);					\n" \
 "	gl_FragColor = curColor;										\n" \
 "}																	\n" \
 ;
-//"	mat3 mtr = mat3(1,-0.001,1.402,1,-0.3441,-0.7141,1,1.772,0.001);\n" \
+
+//"	mat3 mtr = mat3(1,-0.001,1.402,1,-0.3441,-0.7141,1,1.772,0.001);								\n" \
+//"	vec3 yuv = vec3(texture2D(yTexture, vTexCoor).r, texture2D(uTexture, vTexCoor).r, texture2D(vTexture, vTexCoor).r);		\n" \
+
 //渲染顶点坐标数据
 const float dataVertex[] = 
 {
@@ -97,10 +109,17 @@ Java_com_cm_opengles_CmOpenGLES_init(JNIEnv *env, jobject obj, jint pWidth, jint
 	instance->maMVPMatrixHandle = glGetUniformLocation( instance->pProgram, "uMVPMatrix");
 	instance->maPositionHandle = glGetAttribLocation(instance->pProgram, "aPosition");
 	instance->maTexCoorHandle = glGetAttribLocation(instance->pProgram, "aTexCoor");
-	instance->msTextureHandle = glGetUniformLocation(instance->pProgram, "sTexture");
+	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "yTexture");
+	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "uTexture");
+	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "vTexture");
 	//	2.初始化纹理
 	//		2.1生成纹理id
-	glGenTextures(1, &instance->texture);
+	glGenTextures(1, &instance->yTexture);
+//	glBindTexture(GL_TEXTURE_2D, instance->yTexture);
+	glGenTextures(1, &instance->uTexture);
+//	glBindTexture(GL_TEXTURE_2D, instance->uTexture);
+	glGenTextures(1, &instance->vTexture);
+//	glBindTexture(GL_TEXTURE_2D, instance->vTexture);
 	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
 //	glActiveTexture(GL_TEXTURE0);
 //	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
@@ -116,7 +135,14 @@ Java_com_cm_opengles_CmOpenGLES_init(JNIEnv *env, jobject obj, jint pWidth, jint
 	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
 	//	3.分配Yuv数据内存
 	instance->yBufferSize = sizeof(char) * pWidth * pHeight;
+	instance->uBufferSize = sizeof(char) * pWidth / 2 * pHeight / 2;
+	instance->vBufferSize = sizeof(char) * pWidth / 2 * pHeight / 2;
 	instance->yBuffer = (char *)malloc(instance->yBufferSize);
+	instance->uBuffer = (char *)malloc(instance->uBufferSize);
+	instance->vBuffer = (char *)malloc(instance->vBufferSize);
+	memset(instance->yBuffer, 0, instance->yBufferSize);
+	memset(instance->uBuffer, 0, instance->uBufferSize);
+	memset(instance->vBuffer, 0, instance->vBufferSize);
 	instance->pHeight = pHeight;
 	instance->pWidth = pWidth;
 	LOGI_EU("width = %d, height = %d", instance->pWidth, instance->pHeight);
@@ -144,6 +170,15 @@ Java_com_cm_opengles_CmOpenGLES_drawFrame(JNIEnv *env, jobject obj, jbyteArray y
 {
 	jbyte * srcp = (*env)->GetByteArrayElements(env, yuvDatas, 0);
 	memcpy(instance->yBuffer, srcp, instance->yBufferSize);
+	int i,j;
+	j = 0;
+	for(i = instance->yBufferSize; i < size; i+=2)
+	  {
+	    instance->vBuffer[j] = srcp[i];
+	    instance->uBuffer[j] = srcp[i + 1];
+	    ++j;
+	  }
+	LOGI_EU("vBuffer size = %d", j);
 	(*env)->ReleaseByteArrayElements(env, yuvDatas, srcp, JNI_ABORT);
 	drawFrame(instance);
 }
@@ -156,6 +191,8 @@ Java_com_cm_opengles_CmOpenGLES_release(JNIEnv *env, jobject obj)
 	if(instance != 0)
 		{
 			free(instance->yBuffer);
+			free(instance->uBuffer);
+			free(instance->vBuffer);
 			instance->yBuffer = 0;
 			free(instance);
 			instance = 0;
@@ -166,7 +203,7 @@ void printData(void* data, const int size, const char * name)
 {
 	char * dt = (char *)data;
 	int i,j;
-	char * str = (char *) malloc(size);
+	char * str = (char *) malloc(size * sizeof(char) * 2);
 	for (i = 0; i < size; i++)
 		{
 			sprintf(str + 2 * i,"%x%x", dt[i]);

@@ -9,6 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 import com.cm.opengles.CmOpenGLES;
 
 import android.app.Activity;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
@@ -71,6 +72,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback{
 		cp.setPreviewSize(WIDTH, HEIGHT);
 		cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 		cp.setZoom(0);
+		cp.setPreviewFormat(ImageFormat.NV21);
 		try {
 			mCamera.addCallbackBuffer(mData);
 			mCamera.setPreviewCallback(MainActivity.this);

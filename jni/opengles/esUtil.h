@@ -23,9 +23,13 @@ typedef struct Instance
 	//顶点着色器最终变化矩阵引用
 	unsigned int maMVPMatrixHandle;
 	//片元着色器采样器引用
-	unsigned int msTextureHandle;
+	unsigned int myTextureHandle;
+	unsigned int muTextureHandle;
+	unsigned int mvTextureHandle;
 	//纹理数据
-	unsigned int texture;
+	unsigned int yTexture;
+	unsigned int uTexture;
+	unsigned int vTexture;
 	//着色器渲染宽高
 	unsigned int pWidth;
 	unsigned int pHeight;
@@ -35,6 +39,10 @@ typedef struct Instance
 	//yuv数据
 	unsigned char *yBuffer;
 	unsigned long yBufferSize;
+	unsigned char *uBuffer;
+	unsigned long uBufferSize;
+	unsigned char *vBuffer;
+	unsigned long vBufferSize;
 } Instance;
 
 /**

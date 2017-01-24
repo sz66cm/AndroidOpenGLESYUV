@@ -4,6 +4,7 @@ extern const float dataVertex[];
 extern const float dataTexCoor[];
 
 extern void printData(void* data, const int size, const char * name);
+void bindTexture();
 
 void
 drawFrame(void* ins)
@@ -68,32 +69,46 @@ drawFrame(void* ins)
 							2 * 4,//GLsizei stride
 							dataTexCoor//const GLvoid * ptr
 	);
-	//处理纹理
-	//		2.绑定纹理
-	glActiveTexture(GL_TEXTURE0);
-	//		1.1绑定纹理id
-	glBindTexture(GL_TEXTURE_2D, instance->texture);
-	glUniform1i(instance->msTextureHandle, 0);
-	//		1.2输入纹理数据
-	glTexImage2D(GL_TEXTURE_2D,
-				0,//GLint level
-				GL_LUMINANCE,//GLint internalformat
-				instance->pWidth,//GLsizei width
-				instance->pHeight,// GLsizei height,
-				0,//GLint border,
-				GL_LUMINANCE,//GLenum format,
-				GL_UNSIGNED_BYTE,//GLenum type,
-				instance->yBuffer//const void * pixels
-	);
-	//		2.3设置采样模式
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
+	//激活并绑定纹理
+	bindTexture(GL_TEXTURE0, instance->yTexture, instance->pWidth, instance->pHeight, instance->yBuffer);
+	bindTexture(GL_TEXTURE1, instance->uTexture, instance->pWidth / 2, instance->pHeight / 2, instance->uBuffer);
+	bindTexture(GL_TEXTURE2, instance->vTexture, instance->pWidth / 2, instance->pHeight / 2, instance->vBuffer);
+	printData(instance->vBuffer, instance->vBufferSize, "vBuffer");
+	printData(instance->uBuffer, instance->uBufferSize, "uBuffer");
+	glUniform1i(instance->myTextureHandle, 0);
+	glUniform1i(instance->muTextureHandle, 1);
+	glUniform1i(instance->mvTextureHandle, 2);
+//	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
 	//允许顶点数据数组
 	glEnableVertexAttribArray(instance->maPositionHandle);
 	glEnableVertexAttribArray(instance->maTexCoorHandle);
 	//绘制纹理矩形
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
+
+void
+bindTexture(GLenum texture_n, GLuint texture_id, GLsizei width, GLsizei height, const void * buffer)
+{
+	LOGI_EU("texture_n = %x, texture_id = %d, width = %d, height = %d", texture_n, texture_id, width, height);
+	//处理纹理
+	//		2.绑定纹理
+	glActiveTexture(texture_n);//eg:GL_TEXTURE0
+	//		1.1绑定纹理id
+	glBindTexture(GL_TEXTURE_2D, texture_id);
+	//		2.3设置采样模式
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//		1.2输入纹理数据
+	glTexImage2D(GL_TEXTURE_2D,
+				0,//GLint level
+				GL_LUMINANCE,//GLint internalformat
+				width,//GLsizei width
+				height,// GLsizei height,
+				0,//GLint border,
+				GL_LUMINANCE,//GLenum format,
+				GL_UNSIGNED_BYTE,//GLenum type,
+				buffer//const void * pixels
+	);
+};
