@@ -37,11 +37,11 @@ typedef struct Instance
 	unsigned int vWidth;
 	unsigned int vHeight;
 	//yuvÊý¾Ý
-	unsigned char *yBuffer;
+	signed char *yBuffer;
 	unsigned long yBufferSize;
-	unsigned char *uBuffer;
+	signed char *uBuffer;
 	unsigned long uBufferSize;
-	unsigned char *vBuffer;
+	signed char *vBuffer;
 	unsigned long vBufferSize;
 } Instance;
 

@@ -23,11 +23,6 @@ drawFrame(void* ins)
 		}
 	//选择着色程序
 	glUseProgram(instance->pProgram);
-	unsigned int eW, eH;
-	float radio = ((float)instance->pHeight / instance->pWidth);
-	eW = instance->vWidth;
-	eH = (unsigned int)(eW / radio);
-	glViewport(0, 0, eW, eH);
 	//传入变换矩阵数据
 	//		1.初始化旋转矩阵
 	float * maMVPMatrix = getRotateM(NULL, 0, 270, 0, 0, 1);
@@ -73,23 +68,23 @@ drawFrame(void* ins)
 	bindTexture(GL_TEXTURE0, instance->yTexture, instance->pWidth, instance->pHeight, instance->yBuffer);
 	bindTexture(GL_TEXTURE1, instance->uTexture, instance->pWidth / 2, instance->pHeight / 2, instance->uBuffer);
 	bindTexture(GL_TEXTURE2, instance->vTexture, instance->pWidth / 2, instance->pHeight / 2, instance->vBuffer);
-	printData(instance->vBuffer, instance->vBufferSize, "vBuffer");
-	printData(instance->uBuffer, instance->uBufferSize, "uBuffer");
 	glUniform1i(instance->myTextureHandle, 0);
 	glUniform1i(instance->muTextureHandle, 1);
 	glUniform1i(instance->mvTextureHandle, 2);
-//	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
+//	printData(instance->yBuffer, 20, "yBuffer 10 : ");
+//	printData(instance->uBuffer, 20, "uBuffer 10 : ");
+//	printData(instance->vBuffer, 20, "vBuffer 10 : ");
 	//允许顶点数据数组
 	glEnableVertexAttribArray(instance->maPositionHandle);
 	glEnableVertexAttribArray(instance->maTexCoorHandle);
 	//绘制纹理矩形
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 void
 bindTexture(GLenum texture_n, GLuint texture_id, GLsizei width, GLsizei height, const void * buffer)
 {
-	LOGI_EU("texture_n = %x, texture_id = %d, width = %d, height = %d", texture_n, texture_id, width, height);
+//	LOGI_EU("texture_n = %x, texture_id = %d, width = %d, height = %d", texture_n, texture_id, width, height);
 	//处理纹理
 	//		2.绑定纹理
 	glActiveTexture(texture_n);//eg:GL_TEXTURE0

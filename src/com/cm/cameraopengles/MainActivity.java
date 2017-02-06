@@ -9,6 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 import com.cm.opengles.CmOpenGLES;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -16,6 +17,8 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,9 +37,14 @@ public class MainActivity extends Activity implements Camera.PreviewCallback{
 	private GLSurfaceView view;
 	private Camera mCamera;
 
+	private WakeLock wlock;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+		wlock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "fb");
+		wlock.acquire();
 		view = new GLSurfaceView(MainActivity.this);
 		view.setEGLContextClientVersion(2);
 		view.setRenderer(new GLSurfaceView.Renderer() {
@@ -70,9 +78,8 @@ public class MainActivity extends Activity implements Camera.PreviewCallback{
 		mCamera = Camera.open(id);
 		Parameters cp = mCamera.getParameters();
 		cp.setPreviewSize(WIDTH, HEIGHT);
+		cp.setPictureSize(WIDTH, HEIGHT);
 		cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		cp.setZoom(0);
-		cp.setPreviewFormat(ImageFormat.NV21);
 		try {
 			mCamera.addCallbackBuffer(mData);
 			mCamera.setPreviewCallback(MainActivity.this);
@@ -93,6 +100,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback{
 		super.onPause();
 		view.onPause();
 		mCamera.stopPreview();
+		wlock.release();
 	}
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {

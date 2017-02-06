@@ -22,26 +22,8 @@ const char * codeVertexShader = \
 " 	vTexCoor = aTexCoor;							\n" \
 "} 													\n" \
 ;
-//片元着色器脚本代码
-//const char * codeFragShader = \
-//"precision mediump float;											\n" \
-//"uniform sampler2D yTexture; 										\n" \
-//"uniform sampler2D uTexture; 										\n" \
-//"uniform sampler2D vTexture; 										\n" \
-//"varying vec2 vTexCoor;												\n" \
-//"void main()														\n" \
-//"{																	\n" \
-//"	float r,g,b,y,u,v;																	\n" \
-//"	y = texture2D(yTexture, vTexCoor).r;																	\n" \
-//"	u = texture2D(vTexture, vTexCoor).r;																	\n" \
-//"	v = texture2D(uTexture, vTexCoor).r;																	\n" \
-//"	r = y + 1.4075 * (v - 0.5);																	\n" \
-//"	g = y - 0.3455 * (u - 0.5) - 0.7169 * (v - 0.5);																	\n" \
-//"	b = y + 1.779 * (u - 0.5);																	\n" \
-//"	gl_FragColor = vec4(r,g,b,1.0);										\n" \
-//"}																	\n" \
-//;
 
+//-------------MATH---------------
 const char * codeFragShader = \
 "precision mediump float;											\n" \
 "uniform sampler2D yTexture; 										\n" \
@@ -50,35 +32,103 @@ const char * codeFragShader = \
 "varying vec2 vTexCoor;												\n" \
 "void main()														\n" \
 "{																	\n" \
-"	float y = texture2D(yTexture, vTexCoor).r;		\n" \
-"	float u = texture2D(uTexture, vTexCoor).r;		\n" \
-"	float v = texture2D(vTexture, vTexCoor).r;		\n" \
-"	vec3 yuv = vec3(y, u, v);		\n" \
+"	float y = texture2D(yTexture, vTexCoor).r;						\n" \
+"	float u = texture2D(uTexture, vTexCoor).r;											\n" \
+"	float v = texture2D(vTexture, vTexCoor).r;													\n" \
+"	vec3 yuv = vec3(y, u, v);												\n" \
 "	vec3 offset = vec3(16.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);								\n" \
-"	mat3 mtr = mat3(1,1,1, -0.001,-0.3441,1.772, 1.402,-0.7141,0.001);\n" \
-"	vec4 curColor = vec4(mtr * (yuv - offset), 1);					\n" \
-"	gl_FragColor = curColor;										\n" \
+"	mat3 mtr = mat3(1.0, 1.0, 1.0, -0.001, -0.3441, 1.772, 1.402, -0.7141, 0.001);						\n" \
+"	vec4 curColor = vec4(mtr * (yuv - offset), 1);												\n" \
+"	gl_FragColor = curColor;													\n" \
 "}																	\n" \
 ;
 
-//"	mat3 mtr = mat3(1,-0.001,1.402,1,-0.3441,-0.7141,1,1.772,0.001);								\n" \
-//"	vec3 yuv = vec3(texture2D(yTexture, vTexCoor).r, texture2D(uTexture, vTexCoor).r, texture2D(vTexture, vTexCoor).r);		\n" \
+
+
+
+
+//const char * codeFragShader = \
+//"precision mediump float;											\n" \
+//"uniform sampler2D yTexture; 										\n" \
+//"uniform sampler2D uTexture; 										\n" \
+//"uniform sampler2D vTexture; 										\n" \
+//"varying vec2 vTexCoor;												\n" \
+//"void main()														\n" \
+//"{																	\n" \
+//"	float y = texture2D(yTexture, vTexCoor).r;						\n" \
+//"	float u = texture2D(uTexture, vTexCoor).r;											\n" \
+//"	float v = texture2D(vTexture, vTexCoor).r;													\n" \
+//"	vec3 yuv = vec3(y, u, v);												\n" \
+//"	vec3 offset = vec3(16.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);								\n" \
+//"	mat3 mtr = mat3(1.0, 1.0, 1.0, -0.001, -0.3441, 1.772, 1.402, -0.7141, 0.001);						\n" \
+//"	vec4 curColor = vec4(mtr * (yuv - offset), 1);												\n" \
+//"	gl_FragColor = curColor;													\n" \
+//"	if(vTexCoor.x < 0.25) 												\n" \
+//"	{												\n" \
+//"		if (y < 0.001)												\n" \
+//"		{												\n" \
+//"			gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);														\n" \
+//"		}												\n" \
+//"		else																\n" \
+//"		{																\n" \
+//"			gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);																\n" \
+//"		}														\n" \
+//"	}												\n" \
+//"	if(vTexCoor.x > 0.25 && vTexCoor.x < 0.5) 												\n" \
+//"	{												\n" \
+//"		if (u < 0.001)												\n" \
+//"		{												\n" \
+//"			gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);														\n" \
+//"		}												\n" \
+//"		else																\n" \
+//"		{																\n" \
+//"			gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);																\n" \
+//"		}														\n" \
+//"	}												\n" \
+//"	if(vTexCoor.x > 0.5 && vTexCoor.x < 0.75) 												\n" \
+//"	{												\n" \
+//"		if (v < 0.001)												\n" \
+//"		{												\n" \
+//"			gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);														\n" \
+//"		}												\n" \
+//"		else																\n" \
+//"		{																\n" \
+//"			gl_FragColor = vec4(0.5, 1.0, 1.0, 1.0);																\n" \
+//"		}														\n" \
+//"	}												\n" \
+//"	if(vTexCoor.x > 0.75 && vTexCoor.x < 0.85) 												\n" \
+//"	{												\n" \
+//"		if (u == v)												\n" \
+//"		{												\n" \
+//"			gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);														\n" \
+//"		}												\n" \
+//"		else																\n" \
+//"		{																\n" \
+//"			gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);																\n" \
+//"		}														\n" \
+//"	}												\n" \
+//"}																	\n" \
+//;
+
+
+
+
 
 //渲染顶点坐标数据
 const float dataVertex[] = 
 {
 	-1 * UNIT, 1 * UNIT, 0,
 	-1 * UNIT, -1 * UNIT, 0,
-	1 * UNIT, -1 * UNIT, 0,
-	1 * UNIT, 1 * UNIT, 0
+	1 * UNIT, 1 * UNIT, 0,
+	1 * UNIT, -1 * UNIT, 0
 };
 //渲染纹理坐标数据
 const float dataTexCoor[] =
 {
 	0 * TEXTURE_COOR_UNIT, 0 * TEXTURE_COOR_UNIT,
 	0 * TEXTURE_COOR_UNIT, 1 * TEXTURE_COOR_UNIT,
-	1 * TEXTURE_COOR_UNIT, 1 * TEXTURE_COOR_UNIT,
-	1 * TEXTURE_COOR_UNIT, 0 * TEXTURE_COOR_UNIT
+	1 * TEXTURE_COOR_UNIT, 0 * TEXTURE_COOR_UNIT,
+	1 * TEXTURE_COOR_UNIT, 1 * TEXTURE_COOR_UNIT
 };
 
 void printData(void* data, const int size, const char * name);
@@ -110,28 +160,14 @@ Java_com_cm_opengles_CmOpenGLES_init(JNIEnv *env, jobject obj, jint pWidth, jint
 	instance->maPositionHandle = glGetAttribLocation(instance->pProgram, "aPosition");
 	instance->maTexCoorHandle = glGetAttribLocation(instance->pProgram, "aTexCoor");
 	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "yTexture");
-	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "uTexture");
-	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "vTexture");
+	instance->muTextureHandle = glGetUniformLocation(instance->pProgram, "uTexture");
+	instance->mvTextureHandle = glGetUniformLocation(instance->pProgram, "vTexture");
 	//	2.初始化纹理
 	//		2.1生成纹理id
 	glGenTextures(1, &instance->yTexture);
-//	glBindTexture(GL_TEXTURE_2D, instance->yTexture);
 	glGenTextures(1, &instance->uTexture);
-//	glBindTexture(GL_TEXTURE_2D, instance->uTexture);
 	glGenTextures(1, &instance->vTexture);
-//	glBindTexture(GL_TEXTURE_2D, instance->vTexture);
-	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
-//	glActiveTexture(GL_TEXTURE0);
-//	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
-//	//		2.2绑定纹理id
-////	glBindTexture(GL_TEXTURE_2D, instance->texture);
-//	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
-//	//		2.3设置采样模式
-//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
-//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	LOGI_EU("init() yT = %d, uT = %d, vT = %d.", instance->yTexture, instance->uTexture, instance->vTexture);
 	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
 	//	3.分配Yuv数据内存
 	instance->yBufferSize = sizeof(char) * pWidth * pHeight;
@@ -163,13 +199,42 @@ Java_com_cm_opengles_CmOpenGLES_changeLayout(JNIEnv *env, jobject obj, jint widt
 	    instance->vWidth = width;
 	    instance->vHeight = height;
 	  }
+	unsigned int angle;
+	unsigned int eW, eH;
+	float vRadio, radio;
+	angle = 270;
+	vRadio = (float)height / width;
+	if (angle == 90 || angle == 270)
+	  {
+	    radio = ((float)instance->pWidth / instance->pHeight);
+	  }
+	else
+	  {
+	    radio = ((float)instance->pHeight / instance->pWidth);
+	  }
+	if(vRadio < radio)
+	  {
+	    eH = instance->vHeight;
+	    eW = (unsigned int)(eH / radio);
+	  }
+	else
+	  {
+	    eW = instance->vWidth;
+	    eH = (unsigned int)(eW * radio);
+	  }
+	LOGI_EU("changeLayout() eW = %d, eH = %d, radio = %f, vRadio = %f, instance->pHeight = %d, instance->pWidth = %d",
+				eW, eH, radio, vRadio, instance->pHeight, instance->pWidth);
+	glViewport(0, 0, eW, eH);
 }
 JNIEXPORT
 void
 Java_com_cm_opengles_CmOpenGLES_drawFrame(JNIEnv *env, jobject obj, jbyteArray yuvDatas, jint size)
 {
 	jbyte * srcp = (*env)->GetByteArrayElements(env, yuvDatas, 0);
+//	printData(srcp, 20, "yuvDatas y10 : ");
+//	printData(srcp + ((size * 2) / 3), 80, "yuvDatas vu20 : ");
 	memcpy(instance->yBuffer, srcp, instance->yBufferSize);
+//	printData(instance->yBuffer, 20, "instance->yBuffer y10 : ");
 	int i,j;
 	j = 0;
 	for(i = instance->yBufferSize; i < size; i+=2)
@@ -178,7 +243,7 @@ Java_com_cm_opengles_CmOpenGLES_drawFrame(JNIEnv *env, jobject obj, jbyteArray y
 	    instance->uBuffer[j] = srcp[i + 1];
 	    ++j;
 	  }
-	LOGI_EU("vBuffer size = %d", j);
+//	LOGI_EU("vBuffer size = %d", j);
 	(*env)->ReleaseByteArrayElements(env, yuvDatas, srcp, JNI_ABORT);
 	drawFrame(instance);
 }
@@ -204,13 +269,15 @@ void printData(void* data, const int size, const char * name)
 	char * dt = (char *)data;
 	int i,j;
 	char * str = (char *) malloc(size * sizeof(char) * 2);
+	memset(str, '\0', size * sizeof(char) * 2);
 	for (i = 0; i < size; i++)
 		{
-			sprintf(str + 2 * i,"%x%x", dt[i]);
+			sprintf(str + 2 * i,"%02x", dt[i]);
 		}
 	LOGI_EU("%s , %s", name, str);
 	free(str);
 }
+
 
 
 
