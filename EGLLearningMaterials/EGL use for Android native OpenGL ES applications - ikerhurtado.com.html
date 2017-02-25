@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<!-- saved from url=(0071)http://www.ikerhurtado.com/egl-use-android-native-opengles-applications -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>EGL use for Android  native OpenGL ES applications - ikerhurtado.com</title>
+  
+  <meta name="description" content="This post is a brief introduction to Khronos EGL API in order to prepare the surface and the context required for a OpenGL ES Android application. In addition, I show the steps necessary to do it in practice.">
+   
+   
+  <link rel="shortcut icon" href="http://www.ikerhurtado.com/static/favicon.ico">
+  <link rel="stylesheet" href="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/styles.css"><!-- href="/static/styles.css"/> -->
+  <link href="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/css" rel="stylesheet">
+   <link href="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/css(1)" rel="stylesheet" type="text/css">
+  
+  <script async="" src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/analytics.js"></script><script language="JavaScript" type="text/javascript">
+ 
+  
+ function checkConfirmation() {
+     return confirm("Are you sure?");
+   }
+   
+   
+document.addEventListener( 'DOMContentLoaded', main);
+function main() {
+
+	var commentAction= function(e) {
+		//alert($(this).attr('entryid'));
+		var f= document.getElementById('comment-form');
+		f.action= '/568954';
+		f.submit();
+    }
+	
+	var tt= document.getElementById('56721');
+	if (tt !== null) 	tt.onclick= commentAction;
+    
+    var mobMenuOn= false;
+    
+    var deployMenu= function(e) {
+		//alert($(this).attr('entryid'));
+		
+		
+		if (mobMenuOn){
+			document.getElementById('main_wrapper').style.display = '';//$('#main_wrapper').show();
+			document.getElementById('rightbar').style.display = 'none';
+			document.getElementById('myphoto').style.display = '';
+			mobMenuOn= false;
+			
+		}else{
+			document.getElementById('main_wrapper').style.display = 'none';
+			document.getElementById('rightbar').style.display = 'block';
+			document.getElementById('myphoto').style.display = 'none';
+			mobMenuOn= true;
+		}
+		
+		
+		
+		
+    }
+    document.getElementById("menu-mobile").onclick= deployMenu;
+    document.getElementById("menu-mobile-msized").onclick= deployMenu;
+    //$('#menu-mobile').click(deployLabels);
+    //$('#menu-mobile-msized').click(deployLabels);
+}
+
+</script>
+	
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-54987316-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+    
+</head>
+<body>
+
+	<nav id="top-menu">
+		<span><a href="http://www.ikerhurtado.com/about">ABOUT</a></span>
+		<span><a href="http://www.ikerhurtado.com/contact">CONTACT</a></span>	
+		<span><a href="http://www.ikerhurtado.com/aboutme">ABOUT ME</a></span>
+	</nav>	
+	
+  <header>
+  
+  		<div id="heading-small"><b>ikerhurtado</b>.com
+  		<img id="menu-mobile" style="display: inline; margin-left: 10px; margin-bottom:-16px;" src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/menu-mobile.png" width="50px">
+  		</div>
+  		
+  		
+		<div id="heading">
+		
+			You're in	
+			<div id="mynameline"><a href="http://www.ikerhurtado.com/">Iker Hurtado</a>'s pro blog</div>
+			<div id="mytags">Developer | Entrepreneur | Passionate </div>
+			
+			
+				
+		</div>
+		<img id="menu-mobile-msized" src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/menu-mobile.png" width="70px">
+		
+		
+		<div id="phrase">
+		I'm a software engineer specialized in <b>simulation</b>, <b>graphics</b> and <b>GPU programming</b>. My target platforms nowadays are Linux, Android and the Web client. &nbsp;&nbsp;&nbsp;<!--<a href="/">MORE DETAIL</a>-->
+
+
+		</div>
+		
+    	
+  </header> 
+  
+  <div id="content">
+  
+  <!-- <div id="menu">
+    <ul>
+        <li></li>
+    </ul>
+</div> menu -->
+  
+ 
+	<div id="main_wrapper">
+	
+	  <section id="main">
+	 
+	  
+	  <article id="egl-use-android-native-opengles-applications">
+
+	  
+	  
+	  
+	  
+	  <h1><a href="http://www.ikerhurtado.com/egl-use-android-native-opengles-applications">EGL use for Android  native OpenGL ES applications</a></h1>
+	  
+  
+  
+  <div>
+  		<div class="datediv">
+	   	27 Mar 2015 &nbsp; | &nbsp; iker hurtado &nbsp; 
+	   	
+		</div>
+
+	   <div class="socialdiv">
+	  	<a href="https://twitter.com/share"><img src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/share_tw.png" alt="Share on Twitter" height="22px"></a>
+		
+		<a href="https://plus.google.com/share?url=http%3A%2F%2Fwww.ikerhurtado.com%2Fegl-use-android-native-opengles-applications" onclick="javascript:window.open(this.href,
+  &#39;&#39;, &#39;menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600&#39;);return false;"><img src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/share_g+.png" alt="Share on Google+" height="22px"></a>
+  
+  		<a href="https://www.facebook.com/dialog/share?app_id=320352224823261&amp;display=page&amp;href=http%3A%2F%2Fwww.ikerhurtado.com%2Fegl-use-android-native-opengles-applications&amp;redirect_uri=http%3A%2F%2Fwww.ikerhurtado.com%2Fegl-use-android-native-opengles-applications"><img src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/share_fb.png" alt="Share on Facebook" height="22px"></a>
+  	  </div>
+	</div>
+	  
+	  <div style="clear: both;"></div>
+	  	  
+	  <div class="content">
+	  
+		
+			<div class="intro">This post is a brief introduction to Khronos EGL API in order to prepare the surface and the context required for a OpenGL ES Android application. In addition, I show the steps necessary to do it in practice.</div>
+		
+	  
+	  <p>
+<i>EGL</i> is an <b>interface</b> between <b>rendering APIs</b> such as <i>OpenGL ES</i> or <i>OpenVG</i> and the underlying native platform <b>window system</b>. </p>
+
+<p>It handles graphics context management, surface/buffer binding, and rendering synchronization and enables rendering using other standard APIs (of Khronos group). <i>EGL</i> also provides interop capability to enable efficient transfer of data between APIs.
+</p>
+<h3>EGL and OpenGL</h3>
+
+<p>
+<i>OpenGL ES</i> commands require a rendering context, that stores the current <i>OpenGL ES</i> state, and a drawing surface where the geometry will be drawn. The drawing surface specifies the types of buffers required for rendering (color buffer, depth buffer, and stencil buffer) and their bit depths.
+</p>
+
+<p>The <i>OpenGL ES</i> specification does not address these issues. EGL provides an interface to this functionality for <i>OpenGL ES</i> and other graphics APIs. 
+
+</p><p>
+Any  <i>OpenGL ES</i> application will need to do the following using EGL before any rendering can begin:
+</p>
+<ul>
+<li>Check the displays that are available on the device and initialize them.</li>
+<li>Create a rendering surface. There are two types of surfaces: on-screen surfaces, that are attached to the native window system, and off-screen surfaces, that are pixel buffers. These surfaces can be used to render into a texture and can be shared.
+</li>
+
+<li>Create a rendering context. This context needs to be attached to an appropriate surface before rendering can actually begin.</li>
+
+</ul>
+
+
+<p>In addition, the <i>EGL</i> API implements more functionality such as power management, support for multiple rendering contexts in a process, sharing objects (such as textures or vertex buffers) across rendering contexts in a process, and a mechanism to get function pointers to <i>EGL</i> or <i>OpenGL ES</i> extension functions supported by a given implementation.
+</p>
+
+
+
+
+<h3>Configuration needed</h3>
+
+
+<p>
+Header files to include: 
+</p><pre>EGL/egl.h  Main EGL API definitions
+EGL/eglext.h  EGL extension-related definitions
+</pre>
+<p></p>
+
+<p>
+<i>Android.mk</i> build option to dynamically link with android library: <i>LOCAL_LDLIBS += -lEGL</i>
+</p>
+
+
+
+<h3>Setting up with EGL</h3>
+
+<p>
+The following steps describe how to set up and manipulate EGL and its integration with OpenGL:
+</p>
+
+<p>
+1. <b>Get and initialize the display connection</b>: EGL needs to know where the content should be displayed, therefore it will need to get a display connection and initialize it. This is done using the following two methods:
+</p>
+
+<p>
+<b><i>eglGetDisplay</i></b> : It obtains the EGL display connection for the native display. If the input argument is EGL_DEFAULT_DISPLAY , a default display connection is returned.
+</p>
+
+<p>
+<b><i>eglInitialize</i></b>: This call initializes EGL's internal data structures and returns the major and minor version numbers of the EGL implementation.
+</p>
+
+<pre>EGLint majorVersion;
+EGLint minorVersion;
+EGLDisplay display;
+
+display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+eglInitialize(display, &amp;majorVersion, &amp;minorVersion)
+</pre>
+
+<p>
+2. <b>Configure EGL</b>: This is done through <b><i>eglChooseConfig</i></b>. It returns a list of EGL frame buffer configurations that match the requirements specified by the <i>attrib_list</i> argument. The attribute is an array with pairs of attributes and corresponding desired values, and it is terminated by <i>EGL_NONE</i>.
+</p><pre>const EGLint attribs[] = {	
+  EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+  EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+  EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_RED_SIZE, 8, // color components - 8 bit
+  EGL_NONE };
+
+// The application chooses the configuration it desires
+eglChooseConfig(display, attribs, &amp;config, 1, &amp;numConfigs);
+</pre>
+<p></p>
+
+<p>
+3. <b>Create a render surface</b> where the display content will be placed. <b><i>eglCreateWindowSurface</i></b>, given the EGL display connection, the EGL frame buffer configuration and native window, returns a new EGL window surface. 
+</p><pre>surface = eglCreateWindowSurface(display, config, appState-&gt;window, NULL);
+</pre>
+
+<p></p>
+<p>Before this step we must have obtained the native window and reconfigure its buffers (<a target="_blank" href="http://www.ikerhurtado.com/android-native-libraries-apis#native-window">more about Android native window API</a>):
+</p><pre>// As soon as we picked a EGLConfig, we can safely reconfigure 
+// the ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID
+eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &amp;format);
+
+// Change the format and size of the window buffers. 
+// 0,0 -&gt; Buffer dimensions = Screen resolution
+ANativeWindow_setBuffersGeometry(appState-&gt;window, 0, 0, format);
+</pre>
+<p></p>
+
+
+
+
+<p>
+4. <b>Create the EGL rendering context</b> and make it the current.
+</p>
+
+<p>
+<b><i>eglCreateContext</i></b> : It creates a new EGL rendering context, which is used to render into the EGL draw surface. </p>
+
+<p>As for the attributes, in this call, there is a single attribute: <i>EGL_CONTEXT_CLIENT_VERSION</i>, that specifies the type of context associated with the version of <i>OpenGL ES</i> we want to use (default value: 1. Hence <i>OpenGL ES 1.X</i> context). 
+</p>
+
+<p>
+<b><i>eglMakeCurrent</i></b> : It attaches an EGL context to the EGL draw and read surfaces. In our code, the created window surface is used as both the read and draw surface.</p>
+<pre>EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
+context = eglCreateContext(display, config, NULL, contextAttribs);
+eglMakeCurrent(display, surface, surface, context);
+</pre>
+
+
+<p>5. OpenGL drawing.</p>
+
+<p>
+6. <b>Swap the EGL surface internal buffers</b> to display the content. <b><i>eglSwapBuffers</i></b> posts the EGL surface color buffer to a native window. This effectively displays the drawing content on the screen.</p>
+<p>
+EGL internally maintains two buffers. The content of the front buffer is displayed, while the drawing can be done on the back buffer. At the time we decided to display the new drawing, we swap the two buffers.</p>
+<pre>eglSwapBuffers(display, surface);
+</pre>
+
+
+<p>
+7. At time we want to stop rendering. <b>Release the EGL context, destroy the EGL surface, and terminate the EGL display connection</b>:
+
+</p><pre>if (display != EGL_NO_DISPLAY)
+{
+  eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+  if (context != EGL_NO_CONTEXT){
+    eglDestroyContext(display, context);
+  }
+  if (surface != EGL_NO_SURFACE){
+    eglDestroySurface(display, surface);
+  }
+  eglTerminate(display);
+}
+display = EGL_NO_DISPLAY;
+context = EGL_NO_CONTEXT;
+surface = EGL_NO_SURFACE;
+</pre>
+
+<p></p>
+
+
+<br>
+
+<div class="moreinfo">Detailed info on the EGL API in the chapter 3 'An introduction to EGL' of the book <a target="_blank" href="http://www.ikerhurtado.com/book-opengl-es-2.0-programming-guide">OpenGL ES 2.0 Programming Guide</a>
+</div>
+	  
+	  </div>
+	  
+	   <footer> 
+	  <a href="http://www.ikerhurtado.com/egl-use-android-native-opengles-applications#comments">
+	  No comments
+	  </a>
+	  &nbsp;|&nbsp; 
+	  <span class="entry-labels" labels="Android-NDK,Graphics-foundations,OpenGL-ES">TAGS: &nbsp; <a href="http://www.ikerhurtado.com/?tag=Android-NDK"><b>Android-NDK</b></a> ,&nbsp; <a href="http://www.ikerhurtado.com/?tag=Graphics-foundations"><b>Graphics-foundations</b></a> ,&nbsp; <a href="http://www.ikerhurtado.com/?tag=OpenGL-ES"><b>OpenGL-ES</b></a> </span>
+	  </footer>
+	  
+	  </article>
+	  
+	  
+	  <div id="comments">
+	  
+	  </div>
+	  
+	  
+	  <div id="add-comment">
+	  
+		<p>POST A COMMENT:</p>
+	  
+	  	<form id="comment-form" method="post"> 
+
+		<input id="entryidfield-entryform" type="hidden" name="entryid" value="egl-use-android-native-opengles-applications">
+		<input id="author-field" name="author" type="text" placeholder="Name">
+		<input id="email-field" name="email" type="text" placeholder="Email (optional; it won&#39;t get public). If you want to be informed about new comments">
+		
+		<textarea name="comment"></textarea> 
+
+		<button id="56721">Post comment</button> 
+		
+		</form>
+	  </div>
+	  
+	  	  
+	  </section>
+	</div> <!-- main_wrapper -->
+
+	  
+	  <aside id="rightbar">  
+
+	  <!-- <img id="myphoto" src="/static/imgs/me115.jpg" width="120"> -->
+	  	  
+	  <div id="follow">	  
+	  		<a target="_blank" href="https://twitter.com/iker_hurtado"><img src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/twitter.png"></a>&nbsp;&nbsp;
+	  		<a target="_blank" href="https://plus.google.com/+IkerHurtado/"><img src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/gplus.jpg"></a>&nbsp;&nbsp;
+	  		<a target="_blank" href="http://www.ikerhurtado.com/rss/"><img src="./EGL use for Android native OpenGL ES applications - ikerhurtado.com_files/rss.gif"></a>
+	  </div>
+	  
+	  <div id="labels">
+		<nav>
+		
+		<b>POST SERIES</b>
+		  <ul>
+		   
+		    <li><a href="http://www.ikerhurtado.com/going-deeply-javascript">Going deeply into JavaScript</a></li>
+			<li><a href="http://www.ikerhurtado.com/introduction-android-ndk">Android NDK Notes</a></li>
+			<li><a href="http://www.ikerhurtado.com/relearning-cpp">Relearning C++ Notes</a></li>
+			
+			<!--<li ><a href="?tag=-Building Learning labs">Building Learning labs</a></li>-->
+			<!-- <li ><a href="?tag=-Cpp Notes">C++ Notes</a></li>  -->
+			
+			
+			</ul>
+			
+		<b>PROJECTS</b>
+		  <ul>
+		   
+		    <li><a href="http://www.ikerhurtado.com/?tag=.NOMAD">NOMAD</a></li>
+			
+			<!--<li ><a href="?tag=-Building Learning labs">Building Learning labs</a></li>-->
+			<!-- <li ><a href="?tag=-Cpp Notes">C++ Notes</a></li>  -->
+			
+			
+			</ul>
+			
+					
+		  <b>TAGS</b>
+		  <ul>
+		   <li><a href="http://www.ikerhurtado.com/?tag=physics-simulation">Physics simulation</a></li>
+		   <li><a href="http://www.ikerhurtado.com/?tag=OpenGL-ES">OpenGL ES</a></li>
+		   <li><a href="http://www.ikerhurtado.com/?tag=Android-NDK">Android NDK</a></li>
+		   <li><a href="http://www.ikerhurtado.com/?tag=C-Cpp">C/C++</a></li>
+		   <li><a href="http://www.ikerhurtado.com/?tag=JavaScript">JavaScript</a></li>
+		   <li><a href="http://www.ikerhurtado.com/?tag=WebGL">WebGL</a></li>
+		   <li><a href="http://www.ikerhurtado.com/?tag=Golang">GoLang</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=HTML-Canvas">HTML Canvas</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=Graphics-foundations">Graphics foundations</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=HTML5">HTML5</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=Java">Java</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=Internet-services">Internet services</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=Android-system">Android system</a></li>
+
+			<li><a href="http://www.ikerhurtado.com/?tag=Computing-foundations">Computing foundations</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=Linux">Linux</a></li>
+			<li><a href="http://www.ikerhurtado.com/?tag=maths">Maths</a></li>
+			
+			
+			<li><a href="http://www.ikerhurtado.com/?tag=book">Books</a></li>
+			<li><a href="http://www.ikerhurtado.com/egl-use-android-native-opengles-applications?tag="></a></li>
+			
+			
+			</ul>
+			
+			
+			
+			
+		 </nav>
+	  </div> 
+	   
+	  </aside>
+	 
+	   
+	  
+	</div><!--content-->
+	
+	<!-- for social buttons-->
+	
+	
+	
+  
+  
+  
+
+
+
+</body></html>

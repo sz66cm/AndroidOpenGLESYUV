@@ -1,0 +1,266 @@
+
+
+a { text-decoration: none; color: #352521; }
+a:visited {	}
+a:hover,a:focus { text-decoration: underline; }
+a:active { }
+a img {	border: none; }
+
+div.clear{clear: both;}
+
+textarea{display: block; width: 100%; height: 200px}
+form label{display: block;}
+form input{ width: 100%; margin-bottom: 6px;}
+
+
+a.uplink{ display:block;}
+
+body {	font-family: 'Ubuntu', sans-serif; 
+         margin: 0; padding: 0; color: #000; /*background: url(imgs/zigzag.png) 0 0 repeat; */}
+	
+span.actionlabel{ border-radius: 2px;border: 1px solid #AAA; padding: 1px 4px 0 4px; cursor: pointer}
+span.pub-entry, span.pri-entry{background: red; color: #FFF;   border-radius: 2px;border: 1px solid #888; padding: 1px 4px 0 4px; cursor: pointer}
+		
+table {font-size: .8em;
+	background: #f5f5f5;	border-collapse: separate;
+	box-shadow: inset 0 1px 0 #fff;	line-height: 24px;
+	margin: 16px auto;	text-align: center;	width: 100%;
+}	
+
+th {
+  font-weight: bold;
+	padding: 10px 15px;
+	position: relative;	
+}
+
+td {
+	border-right: 1px solid #fff;
+	border-left: 1px solid #e8e8e8;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #e8e8e8;
+	padding: 4px 15px;
+	position: relative;
+}
+
+td:first-child {
+	box-shadow: inset 1px 0 0 #fff;
+}	
+
+td:last-child {
+	border-right: 1px solid #e8e8e8;
+	box-shadow: inset -1px 0 0 #fff;
+}	
+
+
+tr:last-of-type td {
+	box-shadow: inset 0 -1px 0 #fff; 
+}
+
+tr:last-of-type td:first-child {
+	box-shadow: inset 1px -1px 0 #fff;
+}	
+
+tr:last-of-type td:last-child {
+	box-shadow: inset -1px -1px 0 #fff;
+}	
+
+
+header{  padding: 0; }
+
+
+
+/* HEADER RESPONSIVE LAYOUT */
+
+nav#top-menu{ font-size: .62em; padding: 4px 0; text-align: center; background-color: #333; }
+nav#top-menu span a{padding: 0 10px; color: white; font-weight: bold;}
+nav#top-menu span.sel a{ color:black; background-color: white;}
+
+header{ display: -webkit-flex;  display: flex; 
+        -webkit-flex-flow: row wrap;  flex-flow: row wrap;
+         margin: 22px; 
+        }
+
+@media (min-width: 430px) { 
+	nav#top-menu{font-size: .72em; } 
+	nav#top-menu span a{padding: 0 20px; }
+}
+
+@media (min-width: 840px) {
+	header{ width: 840px;   margin-left: auto; margin-right: auto; }
+         
+}
+
+
+header #heading-small{ margin: auto; font-size: 2em;}
+
+header #heading{display: none; }
+
+#heading.es{font-size: 1.1em; }
+#mynameline{ padding-left: 30px;padding-top: 4px;}
+#mynameline a{ font-weight: bold; font-size: 1.4em;line-height: 100%;}
+#mytags{padding-left: 30px;font-size: .54em;}
+#menu-mobile{cursor: pointer}
+#menu-mobile-msized{display: none;cursor: pointer}
+
+#mynameline-es{padding: 4px 0 6px 50px;font-weight: bold; font-size: 1.6em;}
+#mytags-es{font-size: .75em;}
+
+header #phrase{ display: none;  font-family: 'Titillium Web', sans-serif; font-size: .88em; width: 100%;  
+	border-top: 1px solid #EEE; padding: 10px 0 10px 20px;  line-height: 170%;}
+
+@media (min-width: 470px) { 
+	header #heading{display: block;margin: auto; font-size: 1.5em;} 
+	header #heading-small{ display: none;}
+	#menu-mobile-msized{display: inline;}
+}
+
+
+
+@media (min-width: 840px) {
+	
+ header #heading{width: 410px;} 
+ #menu-mobile-msized{display: none;}
+ header #phrase{ display: block; width: 43%; border-left: 1px solid #EEE; border-top:0; padding-left: 50px;}
+	
+}
+
+
+
+/* MENU AND CONTENT RESPONSIVE LAYOUT */
+#content{ display: -webkit-flex;  display: flex; 
+        -webkit-flex-flow: row wrap;  flex-flow: row wrap;}
+
+@media (min-width: 840px) {
+	#content{ width: 840px;   margin: 0 auto; border-top: 1px solid #EEE; padding-top:22px;}
+         
+}
+
+
+div#main_wrapper{width: 100%;   }
+section#main{ margin: 0 16px;}
+
+#menu {width: 100%; border-bottom: 1px solid #EEE; border-top: 1px solid #EEE; }
+#menu ul{ margin: 6px auto 5px; padding: 0 10px}
+#menu li{ display: inline-block;  padding: 0 4px; text-align: left;}
+#menu li.sel a{ font-weight: bold;}
+
+
+aside{ display: none; width: 100%; border-left: 1px solid #EEE; background-color: #EEE;}
+
+
+@media (min-width: 840px) {
+
+	div#main_wrapper{width: 620px;}
+	section#main{ margin:  0 40px 20px 5px;}
+	#menu li{padding: 0 30px; }
+	aside{display: block; width: 219px; background-color: white;}
+	/* #menu li#labelsdeploy{ display: none; }*/
+
+}
+
+
+/* ABOUT ME */
+div.intro-me{  color: #888; padding: 6px 12px; margin: 16px 0;  
+	border-radius: 3px; color: #333; font-size: .88em; font-style: italic; font-family: 'Ubuntu'}
+	
+p.me-head{font-size: .95em;font-style: italic;padding: 2px 12px;margin: 10px 0 24px 0; 
+	border-left: 1px solid #EEE;}
+	
+nav#aboutme-menu{  padding: 12px 0;  border-top: 1px solid #EEE; }
+nav#aboutme-menu div{ margin: 6px 0; } 
+nav#aboutme-menu div a{padding: 0 6px;border-radius: 2px; color: #333; }
+nav#aboutme-menu div.sel a{  cursor: default;font-weight: bold;
+    background: #EEE none repeat scroll 0px 0px !important;
+    box-shadow: 0px 0px 3px 1px #CCC inset;
+    border: 1px solid #999;}
+
+p.curriEntry{ font-size: 1.1em; margin: 20px 0 0 0;}
+p.date{font-size: .9em; margin:0; padding: 0 16px;}
+
+@media (min-width: 840px) {
+	nav#aboutme-menu{ text-align: center;}
+	nav#aboutme-menu div{ display: inline; } 
+}
+
+/* ARTICLE */
+
+div.editbar{margin-bottom: 20px; border-bottom: 1px solid #EEE;}
+
+/* main page multientry*/
+div.under-title{ margin: 8px 0 0 8px; font-size: .8em;}
+
+/* entry page */
+div.datediv{float: left; margin: 8px 0 0 8px; font-size: .8em;}
+div.socialdiv{float: right; padding-top: 6px; }
+
+article{padding: 10px 0; border-bottom: 1px solid #EEE;margin-bottom: 40px;  }
+
+article h1{ margin: 0;font-weight: normal;font-size: 1.7em; 
+display: -webkit-flex;  display: flex; -webkit-flex-flow: row wrap;  flex-flow: row wrap;}
+article h2{ margin: 28px 0 4px 0;font-weight: bold;font-size: 1.36em;}
+article h3{ margin: 24px 0 0 0;font-weight: bold;font-size: 1.15em;}
+article h4{ margin: 24px 0 0 0;font-weight: bold;font-size: 1em;}
+
+
+
+article div.content{font-size: 1em; line-height: 140%;  
+	font-family: 'Titillium Web', sans-serif; color: #222;}
+article div.content a{  color: #8A0000;  /*
+border-radius: 5px; border: 1px solid #DDD;   background-color: #F9F9F9;*/}
+article div.content b{color: #444;}
+
+.figure-head{ padding: 10px 0 0 20px ; font-size: .9em; font-weight: bold;}
+.figure-head span{ font-size: .9em; font-weight: normal; }
+div.content img{   display: block;    margin: 10px auto 20px;    }
+
+p { margin: 12px 0 12px; }
+p.stressed{border: 1px solid #EEE; background: #FAFAFA; padding: 4px 10px; border-radius: 3px; margin: 12px 0; text-shadow: 0 1px #fff;}
+
+article ul{list-style-type: circle;padding: 0px; margin: 12px 20px}
+article ul li{padding-bottom: 12px;}
+
+article pre, article xmp{line-height: 160%; font-size: 1em;border: 1px solid #CCC; padding:  10px 0 10px 16px; border-radius: 3px;}
+
+div.intro, div.moreinfo, div.note, div.question, div.quote{padding: 6px 12px; margin: 16px 0;  
+	border-radius: 3px; color: #333; font-size: .88em; font-style: italic; font-family: 'Ubuntu'}
+div.quote{padding: 0 12px;    border-left: 1px solid #DDD;}
+div.intro{ background-color: #F9F9F9; color: #444; border-bottom: 1px solid #EEE;/*border-bottom: 1px solid #900;*/}
+div.moreinfo{background-color: #EFFBFF;}
+div.note{background-color: #FEF9E0; border: 1px solid #F7EABA /*F0C36D*/;}
+div.question{background-color: #FEE; border: 1px solid red;}
+
+
+/*background-color: #F9EDBE; border: 1px solid #F0C36D; warning*/
+article footer{font-size: .8em; margin-top: 26px}
+div.comment{font-size: .8em;padding: 8px 0 12px 0; border-bottom: 1px solid #EEE; }
+div.comment .text{  padding: 6px;}
+
+	
+article.skills b{font-size: .9em;}
+
+
+
+/* ASIDE DETAILS */
+
+#myphoto{ margin: 20px 30px 0;}
+
+aside > div{}
+aside span{ font-size: .9em; font-weight: bold;
+}
+aside ul{  margin: 0; padding: 0 0 50px 10px; } 
+aside li { display: block; list-style: none; padding-top: 14px;} 
+
+aside #sections {font-size: .9em;}
+aside div {font-size: .8em; padding: 30px 0 0 30px; }
+aside #follow{padding-top: 0;}
+aside #labels li{padding-top: 10px;}
+
+
+/* ABOUTME PAGE*/
+
+#aboutme-photo{ display: inline;	float: left; margin-right: 20px;  }
+
+@media (min-width: 840px) {
+	#aboutme-photo{ display: none;}
+         
+}
