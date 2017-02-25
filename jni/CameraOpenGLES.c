@@ -3,12 +3,11 @@
 #include "opengles/matrix.h"
 #include "cameraShader.h"
 
-//#ifdef __cplusplus
-//    extern "C" {
-//#endif
 
 #define UNIT 1
 #define TEXTURE_COOR_UNIT 1
+
+#define NELEM(m) (sizeof(m) / sizeof((m)[0]))
 
 //顶点着色器脚本代码
 const char * codeVertexShader = \
@@ -43,77 +42,6 @@ const char * codeFragShader = \
 "}																	\n" \
 ;
 
-
-
-
-
-//const char * codeFragShader = \
-//"precision mediump float;											\n" \
-//"uniform sampler2D yTexture; 										\n" \
-//"uniform sampler2D uTexture; 										\n" \
-//"uniform sampler2D vTexture; 										\n" \
-//"varying vec2 vTexCoor;												\n" \
-//"void main()														\n" \
-//"{																	\n" \
-//"	float y = texture2D(yTexture, vTexCoor).r;						\n" \
-//"	float u = texture2D(uTexture, vTexCoor).r;											\n" \
-//"	float v = texture2D(vTexture, vTexCoor).r;													\n" \
-//"	vec3 yuv = vec3(y, u, v);												\n" \
-//"	vec3 offset = vec3(16.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);								\n" \
-//"	mat3 mtr = mat3(1.0, 1.0, 1.0, -0.001, -0.3441, 1.772, 1.402, -0.7141, 0.001);						\n" \
-//"	vec4 curColor = vec4(mtr * (yuv - offset), 1);												\n" \
-//"	gl_FragColor = curColor;													\n" \
-//"	if(vTexCoor.x < 0.25) 												\n" \
-//"	{												\n" \
-//"		if (y < 0.001)												\n" \
-//"		{												\n" \
-//"			gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);														\n" \
-//"		}												\n" \
-//"		else																\n" \
-//"		{																\n" \
-//"			gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);																\n" \
-//"		}														\n" \
-//"	}												\n" \
-//"	if(vTexCoor.x > 0.25 && vTexCoor.x < 0.5) 												\n" \
-//"	{												\n" \
-//"		if (u < 0.001)												\n" \
-//"		{												\n" \
-//"			gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);														\n" \
-//"		}												\n" \
-//"		else																\n" \
-//"		{																\n" \
-//"			gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);																\n" \
-//"		}														\n" \
-//"	}												\n" \
-//"	if(vTexCoor.x > 0.5 && vTexCoor.x < 0.75) 												\n" \
-//"	{												\n" \
-//"		if (v < 0.001)												\n" \
-//"		{												\n" \
-//"			gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);														\n" \
-//"		}												\n" \
-//"		else																\n" \
-//"		{																\n" \
-//"			gl_FragColor = vec4(0.5, 1.0, 1.0, 1.0);																\n" \
-//"		}														\n" \
-//"	}												\n" \
-//"	if(vTexCoor.x > 0.75 && vTexCoor.x < 0.85) 												\n" \
-//"	{												\n" \
-//"		if (u == v)												\n" \
-//"		{												\n" \
-//"			gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);														\n" \
-//"		}												\n" \
-//"		else																\n" \
-//"		{																\n" \
-//"			gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);																\n" \
-//"		}														\n" \
-//"	}												\n" \
-//"}																	\n" \
-//;
-
-
-
-
-
 //渲染顶点坐标数据
 const float dataVertex[] = 
 {
@@ -131,7 +59,11 @@ const float dataTexCoor[] =
 	1 * TEXTURE_COOR_UNIT, 1 * TEXTURE_COOR_UNIT
 };
 
-void printData(void* data, const int size, const char * name);
+/*方法声明区 start*/
+void printData (void* data, const int size, const char * name);
+extern int registerNativeMethods(JNIEnv* env,
+			     const char* className, const JNINativeMethod* gMethods, int numMethods);
+/*方法声明区 end*/
 
 //全局变量
 Instance *instance;
@@ -140,53 +72,34 @@ JNIEXPORT
 jint
 JNI_OnLoad(JavaVM * vm, void * reserved)
 {
+	jint result = -1;
 	LOGI_EU("JNI_OnLoad()");
-	return JNI_VERSION_1_6;
+	JNIEnv *env = NULL;
+	instance = 0;
+	result = JNI_VERSION_1_6;
+	return result;
 }
 
+/**
+ * OpenGL ES 2.0 初始化函数
+ * @param pWidth 分辨率 宽
+ * @param pHeight 分辨率 高
+ * @param angle 显示图像的角度
+ */
 JNIEXPORT
 void
-Java_com_cm_opengles_CmOpenGLES_init(JNIEnv *env, jobject obj, jint pWidth, jint pHeight)
+Java_com_cm_opengles_CmOpenGLES_init(JNIEnv *env, jobject obj, jint pWidth, jint pHeight, jint angle)
 {
+	if (instance != 0)
+	  {
+	    release(instance);
+	    instance = 0;
+	  }
 	LOGI_EU("init()");
 	instance = (Instance *)malloc(sizeof(Instance));
 	memset(instance, 0, sizeof(Instance));
 	//	1.初始化着色器
-	GLuint shaders[2] = {0};
-	shaders[0] = initShader(codeVertexShader, GL_VERTEX_SHADER);
-	shaders[1] = initShader(codeFragShader, GL_FRAGMENT_SHADER);
-	instance->pProgram = initProgram(shaders, 2);
-	instance->maMVPMatrixHandle = glGetUniformLocation( instance->pProgram, "uMVPMatrix");
-	instance->maPositionHandle = glGetAttribLocation(instance->pProgram, "aPosition");
-	instance->maTexCoorHandle = glGetAttribLocation(instance->pProgram, "aTexCoor");
-	instance->myTextureHandle = glGetUniformLocation(instance->pProgram, "yTexture");
-	instance->muTextureHandle = glGetUniformLocation(instance->pProgram, "uTexture");
-	instance->mvTextureHandle = glGetUniformLocation(instance->pProgram, "vTexture");
-	//	2.初始化纹理
-	//		2.1生成纹理id
-	glGenTextures(1, &instance->yTexture);
-	glGenTextures(1, &instance->uTexture);
-	glGenTextures(1, &instance->vTexture);
-	LOGI_EU("init() yT = %d, uT = %d, vT = %d.", instance->yTexture, instance->uTexture, instance->vTexture);
-	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
-	//	3.分配Yuv数据内存
-	instance->yBufferSize = sizeof(char) * pWidth * pHeight;
-	instance->uBufferSize = sizeof(char) * pWidth / 2 * pHeight / 2;
-	instance->vBufferSize = sizeof(char) * pWidth / 2 * pHeight / 2;
-	instance->yBuffer = (char *)malloc(instance->yBufferSize);
-	instance->uBuffer = (char *)malloc(instance->uBufferSize);
-	instance->vBuffer = (char *)malloc(instance->vBufferSize);
-	memset(instance->yBuffer, 0, instance->yBufferSize);
-	memset(instance->uBuffer, 0, instance->uBufferSize);
-	memset(instance->vBuffer, 0, instance->vBufferSize);
-	instance->pHeight = pHeight;
-	instance->pWidth = pWidth;
-	LOGI_EU("width = %d, height = %d", instance->pWidth, instance->pHeight);
-	//清理背景
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-	//允许深度检测
-//	glEnable(GL_DEPTH_TEST);
-	LOGI_EU("%s %d error = %d", __FILE__,__LINE__, glGetError());
+	openglInit (codeVertexShader, codeFragShader, pWidth, pHeight, angle, instance);
 }
 
 JNIEXPORT
@@ -199,42 +112,29 @@ Java_com_cm_opengles_CmOpenGLES_changeLayout(JNIEnv *env, jobject obj, jint widt
 	    instance->vWidth = width;
 	    instance->vHeight = height;
 	  }
-	unsigned int angle;
-	unsigned int eW, eH;
-	float vRadio, radio;
-	angle = 270;
-	vRadio = (float)height / width;
-	if (angle == 90 || angle == 270)
-	  {
-	    radio = ((float)instance->pWidth / instance->pHeight);
-	  }
-	else
-	  {
-	    radio = ((float)instance->pHeight / instance->pWidth);
-	  }
-	if(vRadio < radio)
-	  {
-	    eH = instance->vHeight;
-	    eW = (unsigned int)(eH / radio);
-	  }
-	else
-	  {
-	    eW = instance->vWidth;
-	    eH = (unsigned int)(eW * radio);
-	  }
-	LOGI_EU("changeLayout() eW = %d, eH = %d, radio = %f, vRadio = %f, instance->pHeight = %d, instance->pWidth = %d",
-				eW, eH, radio, vRadio, instance->pHeight, instance->pWidth);
-	glViewport(0, 0, eW, eH);
 }
+
+/**
+ * 修改显示图像的角度
+ * @param angle
+ */
+JNIEXPORT
+void
+Java_com_cm_opengles_CmOpenGLES_changeAngle(JNIEnv *env, jobject obj, jint angle)
+{
+	LOGI_EU("changeAngle() angle = %d", angle);
+	if(instance != 0)
+	  {
+	    instance->angle = angle;
+	  }
+}
+
 JNIEXPORT
 void
 Java_com_cm_opengles_CmOpenGLES_drawFrame(JNIEnv *env, jobject obj, jbyteArray yuvDatas, jint size)
 {
 	jbyte * srcp = (*env)->GetByteArrayElements(env, yuvDatas, 0);
-//	printData(srcp, 20, "yuvDatas y10 : ");
-//	printData(srcp + ((size * 2) / 3), 80, "yuvDatas vu20 : ");
 	memcpy(instance->yBuffer, srcp, instance->yBufferSize);
-//	printData(instance->yBuffer, 20, "instance->yBuffer y10 : ");
 	int i,j;
 	j = 0;
 	for(i = instance->yBufferSize; i < size; i+=2)
@@ -243,7 +143,6 @@ Java_com_cm_opengles_CmOpenGLES_drawFrame(JNIEnv *env, jobject obj, jbyteArray y
 	    instance->uBuffer[j] = srcp[i + 1];
 	    ++j;
 	  }
-//	LOGI_EU("vBuffer size = %d", j);
 	(*env)->ReleaseByteArrayElements(env, yuvDatas, srcp, JNI_ABORT);
 	drawFrame(instance);
 }
@@ -253,16 +152,100 @@ void
 Java_com_cm_opengles_CmOpenGLES_release(JNIEnv *env, jobject obj)
 {
 	LOGI_EU("release()");
-	if(instance != 0)
-		{
-			free(instance->yBuffer);
-			free(instance->uBuffer);
-			free(instance->vBuffer);
-			instance->yBuffer = 0;
-			free(instance);
-			instance = 0;
-		}
+	release(instance);
+	instance = 0;
 }
+
+EGLint majorVersion = -1;
+EGLint minorVersion = -1;
+EGLDisplay display = EGL_NO_DISPLAY;
+EGLSurface eglSurface = NULL;
+EGLContext eglContext = NULL;
+
+/**
+ *	初始化EGL SurfaceView使用需要
+ *	@param surface
+ **/
+JNIEXPORT
+void
+Java_com_cm_opengles_CmOpenGLES_initEGL(JNIEnv *env, jobject obj, jobject surface, jint width, jint height)
+{
+  //初始化EGL
+  //eglGetDisplay
+  display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  if (display == EGL_NO_DISPLAY) {
+      LOGI_EU("display = EGL_NO_DISPLAY !");
+  }
+  //eglInitialize
+  eglInitialize(display, &majorVersion, &minorVersion);
+  LOGI_EU("majorVersion = %d, minorVersion = %d!", majorVersion, minorVersion);
+  //eglChooseConfig
+  const EGLint attribs[] = {	
+  EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+  EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+  EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_RED_SIZE, 8, // color components - 8 bit
+  EGL_NONE };
+  EGLConfig configs;
+  EGLint numOfConfigs;
+  eglChooseConfig(display, attribs, &configs, 1, &numOfConfigs);
+  EGLNativeWindowType window = NULL;
+  window = ANativeWindow_fromSurface(env, surface);
+  if (window == NULL) {
+      LOGI_EU("window = NULL !");
+  }
+  ANativeWindow_setBuffersGeometry(window, width, height, 0);
+  //eglCreateWindowSurface
+  eglSurface = eglCreateWindowSurface(display, configs, window, NULL);
+  if (eglSurface == NULL) {
+      LOGI_EU("eglSurface = NULL !");
+  }
+  //eglCreateContext
+  EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
+  eglContext = eglCreateContext(display, configs, NULL, contextAttribs);
+  if (eglContext == NULL) {
+      LOGI_EU("eglContext = NULL !");
+  }
+  eglMakeCurrent(display, eglSurface, eglSurface, eglContext);
+}
+
+/**
+ * 刷新EGL前后画布，界面呈现缓存图像。
+ */
+JNIEXPORT
+void
+Java_com_cm_opengles_CmOpenGLES_swapEGL(JNIEnv *env, jobject obj)
+{
+  //刷新EGL前后画布，界面呈现缓存图像
+  //OpenGL Drawing
+  eglSwapBuffers(display, eglSurface);
+}
+
+/**
+ * 销毁EGL （SurfaceView使用需要）
+ */
+JNIEXPORT
+void
+Java_com_cm_opengles_CmOpenGLES_destoryEGL(JNIEnv *env, jobject obj)
+{
+  //销毁EGL
+	  if (display != EGL_NO_DISPLAY)
+	{
+	  eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	  if (eglContext!= EGL_NO_CONTEXT){
+	    eglDestroyContext(display, eglContext);
+	  }
+	  if (eglContext != EGL_NO_SURFACE){
+	    eglDestroySurface(display, eglSurface);
+	  }
+	  eglTerminate(display);
+	}
+	display = EGL_NO_DISPLAY;
+	eglContext = EGL_NO_CONTEXT;
+	eglSurface = EGL_NO_SURFACE;
+}
+
+
+
 
 void printData(void* data, const int size, const char * name)
 {
@@ -277,30 +260,3 @@ void printData(void* data, const int size, const char * name)
 	LOGI_EU("%s , %s", name, str);
 	free(str);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//#ifdef __cplusplus
-//}
-//#endif

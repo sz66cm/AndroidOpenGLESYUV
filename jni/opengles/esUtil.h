@@ -6,6 +6,10 @@
 #include <android/log.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
 #include "matrix.h"
 
 #define LOG_TAG "esUtil"
@@ -36,6 +40,8 @@ typedef struct Instance
 	//屏幕的宽高
 	unsigned int vWidth;
 	unsigned int vHeight;
+	//图像旋转角度
+	unsigned int angle;
 	//yuv数据
 	signed char *yBuffer;
 	unsigned long yBufferSize;

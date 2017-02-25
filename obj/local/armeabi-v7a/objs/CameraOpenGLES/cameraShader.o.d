@@ -28,6 +28,11 @@ obj/local/armeabi-v7a/objs/CameraOpenGLES/cameraShader.o: \
  E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h \
  E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
  E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h \
+ E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
+ E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
+ E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
+ E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/android/rect.h \
+ E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/EGL/eglext.h \
  jni/opengles/matrix.h \
  E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/math.h \
  E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/limits.h \
@@ -98,6 +103,16 @@ E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/GLES2/gl2p
 E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
 
 E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h:
+
+E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
+
+E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
+
+E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/android/native_window.h:
+
+E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/android/rect.h:
+
+E:/new/NDK/android-ndk-r10d/platforms/android-14/arch-arm/usr/include/EGL/eglext.h:
 
 jni/opengles/matrix.h:
 
